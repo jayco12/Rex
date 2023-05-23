@@ -76,18 +76,18 @@ class _GazFormState extends State<GazForm> {
     seekKg();
   }
 
-  String getPrice() {
+  int getPrice() {
     List<Gas> gazPrice = [];
     for (String amount in gasPrice) {
       //print(amount);
       if (dropdownValue == gasKg[0]) {
         var gasOne = int.parse(gasPrice[0]) * quantite;
         print(gasOne);
-        return gasOne.toString();
+        return gasOne;
       } else if (dropdownValue == gasKg[1]) {
         var gasTwo = int.parse(gasPrice[1]) * quantite;
         print(gasTwo);
-        return gasTwo.toString();
+        return gasTwo;
       }
       gazPrice.add(
         Gas(
@@ -219,7 +219,7 @@ class _GazFormState extends State<GazForm> {
                           child: Center(
                             child: GasFormText(
                               controller: priceController,
-                              text: getPrice(),
+                              text: (getPrice()).toString(),
                               margin: const EdgeInsets.only(
                                   left: 20.0, right: 44.0),
                             ),
@@ -236,7 +236,7 @@ class _GazFormState extends State<GazForm> {
                                   image: widget.image,
                                   size: dropdownValue,
                                   quantity: quantite.toString(),
-                                  price: getPrice().toString()));
+                                  price: getPrice()));
                             });
                             showDialog(
                                 context: context,
@@ -284,7 +284,7 @@ class Gaz {
   final image;
   final size;
   final String quantity;
-  final String price;
+  final int price;
 
   Gaz(
       {required this.image,

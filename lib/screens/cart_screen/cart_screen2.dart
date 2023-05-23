@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +16,15 @@ class CartScreen2 extends StatefulWidget {
 
   @override
   State<CartScreen2> createState() => _CartScreen2State();
+}
+
+totalItems({required List<Gaz> data}) {
+  if (data.isEmpty) {
+    return 0;
+  }
+  var total = (data.fold<int?>(data.first.price,
+      (previousValue, element) => previousValue! + element.price));
+  return (total);
 }
 
 class _CartScreen2State extends State<CartScreen2> {
@@ -112,16 +123,16 @@ class _CartScreen2State extends State<CartScreen2> {
             height: 10.0,
           ),
           Row(
-            children: const [
-              Text(
+            children: [
+              const Text(
                 'TOTAL',
                 style: kCart4,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 150.0,
               ),
               Text(
-                '15,000 CFA',
+                '${totalItems(data: datalist)} CFA',
                 style: kCart4,
               ),
             ],
@@ -129,7 +140,8 @@ class _CartScreen2State extends State<CartScreen2> {
           const SizedBox(
             height: 42.5,
           ),
-          const Submit(
+          Submit(
+              onPressed: () {},
               margin: EdgeInsets.only(left: 205.0, right: 10.0),
               text: 'COMMANDE'),
           const SizedBox(

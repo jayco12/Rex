@@ -45,7 +45,7 @@ class _StartShoppingState extends State<StartShopping> {
                 // textAlign: TextAlign.left,
               )),
         ),
-        Submit(
+        const Submit(
           margin: EdgeInsets.only(left: 111.0, right: 111.0),
           text: 'Commencer à magasiner',
         ),

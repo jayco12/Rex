@@ -103,7 +103,7 @@ const kButton = TextStyle(
   fontFamily: 'fonts/Poppins-Regular.ttf',
   fontWeight: FontWeight.w500,
   color: RexColors.pageColor,
-  fontSize: 9.0,
+  fontSize: 8.0,
 );
 
 const kBusinesses = TextStyle(

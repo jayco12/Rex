@@ -45,7 +45,7 @@ class _BaseBarState extends State<BaseBar> {
   int selectedIndex = 0;
   final widgetOptions = [
     const HomePage(),
-    const CartScreen2(),
+   const CartScreen2(),
     const UserInfo(),
     const GazPage(
       addAppbar: false,

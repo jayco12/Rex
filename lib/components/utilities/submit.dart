@@ -36,7 +36,7 @@ class Submit extends StatelessWidget {
         ),
         child: SingleChildScrollView(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 text,
@@ -50,6 +50,9 @@ class Submit extends StatelessWidget {
               const Icon(
                 Icons.arrow_forward_rounded,
                 size: 7.09,
+              ),
+              const SizedBox(
+                width: 4.78,
               ),
             ],
           ),

@@ -65,8 +65,8 @@ class _CartScreen2State extends State<CartScreen2> {
               ),
             ],
           ),
-          const Text(
-            '2 élément', //${Provider.of<CartData>(context).cartCount}
+          Text(
+            '${datalist.length} élément', //${Provider.of<CartData>(context).cartCount}
             style: kCart1,
           ),
           const SizedBox(

@@ -5,14 +5,19 @@ import 'package:rex/components/utilities/constants.dart';
 class GasFormText extends StatelessWidget {
   const GasFormText({
     Key? key,
+    required this.enabled,
+    this.onChanged,
     this.controller,
     required this.margin,
     required this.text,
   }) : super(key: key);
 
+  final bool enabled;
   final dynamic margin;
   final String text;
   final controller;
+  final void Function(String)? onChanged;
+
   @override
   Widget build(BuildContext context) {
     return Container(

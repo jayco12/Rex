@@ -1,22 +1,18 @@
 import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rex/components/utilities/back_arrow.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:rex/components/utilities/choice_text.dart';
 import 'package:rex/components/utilities/constants.dart';
 import 'package:rex/components/utilities/submit.dart';
 import 'package:rex/components/screens template/gas_form_field.dart';
-import 'package:rex/components/header_footer/top_bar.dart';
 import 'package:rex/components/screens template/gas_form_text.dart';
 import 'package:rex/components/utilities/floating_button.dart';
 import 'package:rex/components/utilities/gaz_class.dart';
-import 'package:provider/provider.dart';
-
-import '../services/firebase_functions.dart';
-import 'cart_screen/cart_data.dart';
-import 'cart_screen/cart_list.dart';
+import '../components/utilities/rex_colors.dart';
+import 'cart_screen/models/Gaz.dart';
 
 class GazForm extends StatefulWidget {
   GazForm({Key? key, required this.image}) : super(key: key);
@@ -74,6 +70,7 @@ class _GazFormState extends State<GazForm> {
   void initState() {
     super.initState();
     seekKg();
+    box = Hive.box('GazBox');
   }
 
   int getPrice() {
@@ -100,39 +97,26 @@ class _GazFormState extends State<GazForm> {
   }
 
   late int quantite = 1;
-
+  late int price = 3500;
   final _formKey = GlobalKey<FormState>();
   final imageController = TextEditingController();
   final dropdownController = TextEditingController();
   final qualityController = TextEditingController();
   final priceController = TextEditingController();
+  late final Box box;
+  _addInfo() async {
+    Gaz newGaz = Gaz(
+        image: widget.image,
+        size: dropdownValue,
+        quantity: quantite.toString(),
+        price: getPrice());
+    box.add(newGaz);
+    print('Info added to box!');
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size(double.infinity, 120),
-        child: TopBar(
-          phonenavigator: InkResponse(
-            onTap: () {
-              context.router.pushNamed('/our-contact');
-            },
-            child: const Icon(Icons.phone),
-          ),
-          infonavigator: InkResponse(
-            onTap: () {
-              //widget.infonavigator;
-            },
-            child: const Icon(Icons.info_outline_rounded),
-          ),
-          aboutnavigator: InkResponse(
-            onTap: () {
-              context.router.pushNamed('/about-us');
-            },
-            child: const Icon(Icons.group_rounded),
-          ),
-        ),
-      ),
       body: SingleChildScrollView(
         child: Column(children: [
           FloatingButton(
@@ -141,7 +125,27 @@ class _GazFormState extends State<GazForm> {
               context.router.replaceNamed('/salon-page');
             },
           ),
-          const BackArrow(),
+          Container(
+            margin: const EdgeInsets.only(
+              left: 36.77,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                InkResponse(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: const FaIcon(
+                    FontAwesomeIcons.leftLong,
+                    color: RexColors.textColor,
+                    size: 24.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
           const ChoiceText(),
           SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -167,9 +171,10 @@ class _GazFormState extends State<GazForm> {
                   child: ListView(
                     shrinkWrap: true,
                     children: [
-                      const GasFormText(
+                      GasFormText(
                         margin: EdgeInsets.only(left: 20.0, top: 25.0),
                         text: 'Taille',
+                        enabled: false,
                       ),
                       Container(
                         margin: const EdgeInsets.only(left: 20.0, right: 80.0),
@@ -178,11 +183,13 @@ class _GazFormState extends State<GazForm> {
                       const SizedBox(
                         height: 5.0,
                       ),
-                      const GasFormText(
-                          margin: EdgeInsets.only(
-                            left: 20.0,
-                          ),
-                          text: 'Quantite'),
+                      GasFormText(
+                        margin: EdgeInsets.only(
+                          left: 20.0,
+                        ),
+                        text: 'Quantite',
+                        enabled: false,
+                      ),
                       GazFormField(
                         controller: qualityController,
                         onChanged: (_) {
@@ -201,30 +208,24 @@ class _GazFormState extends State<GazForm> {
                       const SizedBox(
                         height: 5.0,
                       ),
-                      const GasFormText(
+                      GasFormText(
                         margin: EdgeInsets.only(
                           left: 20.0,
                         ),
                         text: 'Prix',
+                        enabled: false,
                       ),
-                      OutlinedButton(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                            maximumSize: const Size.fromWidth(65),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20))),
-                        child: SizedBox(
-                          height: 30,
-                          width: 150,
-                          child: Center(
-                            child: GasFormText(
-                              controller: priceController,
-                              text: (getPrice()).toString(),
-                              margin: const EdgeInsets.only(
-                                  left: 20.0, right: 44.0),
-                            ),
-                          ),
-                        ),
+                      GasFormText(
+                        controller: priceController,
+                        text: (getPrice()).toString(),
+                        onChanged: (_) {
+                          setState(() {
+                            price = int.parse(priceController.text);
+                          });
+                          print(price);
+                        },
+                        margin: const EdgeInsets.only(left: 20.0, right: 44.0),
+                        enabled: false,
                       ),
                       const SizedBox(
                         height: 10.0,
@@ -232,16 +233,12 @@ class _GazFormState extends State<GazForm> {
                       Submit(
                           onPressed: () async {
                             setState(() {
-                              datalist.add(Gaz(
-                                  image: widget.image,
-                                  size: dropdownValue,
-                                  quantity: quantite.toString(),
-                                  price: getPrice()));
+                              _addInfo();
                             });
                             showDialog(
                                 context: context,
                                 builder: (context) {
-                                  Future.delayed(const Duration(seconds: 2),
+                                  Future.delayed(const Duration(seconds: 1),
                                       () {
                                     Navigator.of(context).pop(true);
                                   });
@@ -258,7 +255,7 @@ class _GazFormState extends State<GazForm> {
                             qualityController.clear();
                           },
                           margin:
-                              const EdgeInsets.only(left: 19.0, right: 41.1),
+                              const EdgeInsets.only(left: 19.0, right: 31.1),
                           text: 'AJOUTER AU PANIER'),
                     ],
                   ),
@@ -279,21 +276,6 @@ class _GazFormState extends State<GazForm> {
     );
   }
 }
-
-class Gaz {
-  final image;
-  final size;
-  final String quantity;
-  final int price;
-
-  Gaz(
-      {required this.image,
-      required this.size,
-      required this.quantity,
-      required this.price});
-}
-
-List<Gaz> datalist = [];
 
 class Gas extends StatelessWidget {
   const Gas({

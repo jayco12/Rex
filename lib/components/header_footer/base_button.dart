@@ -7,6 +7,7 @@ import 'package:rex/components/header_footer/top_bar.dart';
 import 'package:rex/components/utilities/rex_colors.dart';
 import 'package:rex/screens/gaz_page.dart';
 // import '../../routes/app_router.gr.dart';
+import '../../screens/cart_screen/models/Gaz.dart';
 import '../../screens/gaz_form.dart';
 import '../../screens/home_page.dart';
 import '../../screens/user_info.dart';

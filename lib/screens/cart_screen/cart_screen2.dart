@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rex/screens/cart_screen/start_shopping.dart';
+import 'package:rex/services/hive_storage_service.dart';
 import '../../components/utilities/constants.dart';
 import '../../components/utilities/submit.dart';
 import '../gaz_form.dart';
@@ -17,35 +20,22 @@ class CartScreen2 extends StatefulWidget {
   State<CartScreen2> createState() => _CartScreen2State();
 }
 
-totalItems(List<Gaz> data) async {
-  if (data.isEmpty) {
-    return 0;
-  }
-  var total = (data.fold<int?>(data.first.price,
-      (previousValue, element) => previousValue! + element.price));
-  return (total);
-}
-
 class _CartScreen2State extends State<CartScreen2> {
-  late final Box contactBox;
+  final HiveHelper _hiveHelper = HiveHelper();
 
-  _deleteInfo(int index) {
-    contactBox.deleteAt(index);
-    print('Item deleted from box at index:$index');
-  }
+  // late final Box contactBox;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    contactBox = Hive.box('GazBox');
+    // contactBox = Hive.box('GazBox');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ValueListenableBuilder(
-          valueListenable: contactBox.listenable(),
+          valueListenable: gazBox.listenable(),
           builder: (context, Box box, widget) {
             return box.isEmpty
                 ? StartShopping()
@@ -84,7 +74,7 @@ class _CartScreen2State extends State<CartScreen2> {
                                               TextButton(
                                                   onPressed: () {
                                                     setState(() {
-                                                      box.clear();
+                                                      _hiveHelper.deleteAll();
                                                     });
                                                     context.router.pop();
                                                   },
@@ -111,24 +101,25 @@ class _CartScreen2State extends State<CartScreen2> {
                                 shrinkWrap: true,
                                 itemCount: box.length,
                                 itemBuilder: (context, index) {
-                                  var currentBox = box;
-                                  var GazData = currentBox.getAt(index);
-
+                                  var gazData = gazBox.getAt(index);
                                   return Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
                                     elevation: 6.0,
                                     child: ListTile(
                                       leading: SizedBox(
                                         height: 70,
                                         width: 70,
                                         child: Image.asset(
-                                          GazData.image,
+                                          gazData!.image,
                                           height: 50,
                                           width: 50,
                                         ),
                                       ),
-                                      title: Text(GazData.size),
+                                      title: Text(gazData.size),
                                       subtitle: Text(
-                                          '\n\nquantity:${GazData.quantity}'),
+                                          '\n\nquantity:${gazData.quantity}'),
                                       trailing: GestureDetector(
                                           child: const Icon(
                                             Icons.delete_outline,
@@ -136,7 +127,7 @@ class _CartScreen2State extends State<CartScreen2> {
                                           ),
                                           onTap: () {
                                             setState(() {
-                                              _deleteInfo(index);
+                                              _hiveHelper.deleteInfo(index);
                                             });
                                           }),
                                     ),
@@ -146,20 +137,22 @@ class _CartScreen2State extends State<CartScreen2> {
                           const SizedBox(
                             height: 10.0,
                           ),
-                          Row(
-                            children: [
-                              const Text(
-                                'TOTAL',
-                                style: kCart4,
-                              ),
-                              const SizedBox(
-                                width: 150.0,
-                              ),
-                              Text(
-                                '${totalItems} CFA',
-                                style: kCart4,
-                              ),
-                            ],
+                          Expanded(
+                            child: Row(
+                              children: [
+                                const Text(
+                                  'TOTAL',
+                                  style: kCart4,
+                                ),
+                                const SizedBox(
+                                  width: 150.0,
+                                ),
+                                Text(
+                                  '${_hiveHelper.totalItems()} CFA',
+                                  style: kCart4,
+                                ),
+                              ],
+                            ),
                           ),
                           const SizedBox(
                             height: 42.5,

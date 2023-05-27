@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:rex/routes/app_router.gr.dart';
+import 'package:rex/services/hive_storage_service.dart';
 
 import 'screens/cart_screen/models/Gaz.dart';
 
@@ -12,7 +13,8 @@ Future<void> main() async {
   // Registering the adapter
   Hive.registerAdapter(GazAdapter());
   // Opening the box
-  await Hive.openBox('GazBox');
+  final _h = HiveHelper( );
+  gazBox = await Hive.openBox<Gaz>('gazBox');
 
   runApp(
     Rex(),

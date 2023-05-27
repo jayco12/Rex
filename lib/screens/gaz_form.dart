@@ -11,6 +11,7 @@ import 'package:rex/components/screens template/gas_form_field.dart';
 import 'package:rex/components/screens template/gas_form_text.dart';
 import 'package:rex/components/utilities/floating_button.dart';
 import 'package:rex/components/utilities/gaz_class.dart';
+import 'package:rex/services/hive_storage_service.dart';
 import '../components/utilities/rex_colors.dart';
 import 'cart_screen/models/Gaz.dart';
 
@@ -23,6 +24,8 @@ class GazForm extends StatefulWidget {
 }
 
 class _GazFormState extends State<GazForm> {
+      final HiveHelper _hiveHelper = HiveHelper();
+
   late String image;
   String dropdownValue = '6KG';
   DropdownButton<String> dropDown() {
@@ -70,7 +73,6 @@ class _GazFormState extends State<GazForm> {
   void initState() {
     super.initState();
     seekKg();
-    box = Hive.box('GazBox');
   }
 
   int getPrice() {
@@ -103,14 +105,14 @@ class _GazFormState extends State<GazForm> {
   final dropdownController = TextEditingController();
   final qualityController = TextEditingController();
   final priceController = TextEditingController();
-  late final Box box;
+
   _addInfo() async {
     Gaz newGaz = Gaz(
         image: widget.image,
         size: dropdownValue,
         quantity: quantite.toString(),
         price: getPrice());
-    box.add(newGaz);
+  gazBox.add(newGaz);
     print('Info added to box!');
   }
 
@@ -238,17 +240,24 @@ class _GazFormState extends State<GazForm> {
                             showDialog(
                                 context: context,
                                 builder: (context) {
-                                  Future.delayed(const Duration(seconds: 1),
-                                      () {
-                                    Navigator.of(context).pop(true);
-                                  });
-                                  return const AlertDialog(
-                                    backgroundColor: Colors.transparent,
-                                    icon: Icon(
+                                  // Future.delayed(const Duration(seconds: 1),
+                                  //     () {
+                                  //   Navigator.of(context).pop(true);
+                                  // });
+                                  return AlertDialog(
+                                    content: const Icon(
                                       Icons.check_circle_rounded,
                                       color: Colors.green,
                                       size: 100,
                                     ),
+                                    backgroundColor: Colors.transparent,
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            context.router.pop();
+                                          },
+                                          child: Text('Done'))
+                                    ],
                                   );
                                 });
                             priceController.clear();

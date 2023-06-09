@@ -1,67 +1,93 @@
+import 'dart:convert';
 
-// mport 'dart:html';
+import 'cart_screen/models/Gaz.dart';
 
-// import 'package:flutter/material.dart';
-// import 'package:joe_and_getx/model/data_model.dart';
+class EmailSenderModel {
+  String? serviceId;
+  String? templateId;
+  String? userId;
+  TemplateParams? templateParams;
+  List<Gaz>? gases;
 
-// class ListOfData extends StatefulWidget {
-//   static const routeName = '/listpage';
-//   const ListOfData({super.key});
+  EmailSenderModel(
+      {required this.serviceId,
+      required this.templateId,
+      required this.userId,
+      required this.templateParams,
+      required this.gases});
 
-//   @override
-//   State<ListOfData> createState() => _ListOfDataState();
-// }
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'serviceId': serviceId,
+      'templateId': templateId,
+      'userId': userId,
+      'templateParams': templateParams?.toJson(),
+      'gases': gases!.map((x) => x.toMap()).toList(),
+    };
+  }
 
-// class _ListOfDataState extends State<ListOfData> {
-//   final name = TextEditingController();
-//   final date = TextEditingController();
+  factory EmailSenderModel.fromMap(Map<String, dynamic> map) {
+    return EmailSenderModel(
+      serviceId: map['serviceId'] != null ? map['serviceId'] as String : null,
+      templateId:
+          map['templateId'] != null ? map['templateId'] as String : null,
+      userId: map['userId'] != null ? map['userId'] as String : null,
+      templateParams: map['templateParams'] != null
+          ? TemplateParams.fromMap(
+              map['templateParams'] as Map<String, dynamic>)
+          : null,
+      gases: map['gases'] != null
+          ? List<Gaz>.from(
+              (map['gases'] as List<int>).map<Gaz?>(
+                (x) => Gaz.fromMap(x as Map<String, dynamic>),
+              ),
+            )
+          : null,
+    );
+  }
 
-//   final list = datalist;
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: ListView.builder(
-//           itemCount: datalist.length,
-//           itemBuilder: (_, i) => ListTile(
-//                 leading: CircleAvatar(child: Image.asset(list[i].img)),
-//                 title: Text('${list[i].name}'),
-//                 subtitle: Text('${list[i].data}'),
-//               )),
-//       floatingActionButton: FloatingActionButton.extended(
-//           onPressed: () {
-//             showDialog(
-//                 context: context,
-//                 builder: (_) => AlertDialog(
-//                       content: Form(
-//                           child: Column(
-//                         children: [
-//                           TextField(
-//                             controller: name,
-//                           ),
-//                           TextField(
-//                             controller: date,
-//                           ),
-//                         ],
-//                       )),
-//                       actions: [
-//                         TextButton(
-//                             onPressed: () {
-//                               setState(() {
-//                                 datalist.add(
-//                                     Gaz(name.text, date.text, 'assets/images/db.png'));
-//                               });
-//                               name.clear();
-//                               date.clear();
-//                               Navigator.of(context).pop();
-//                             },
-//                             child: const Text('Add'))
-// child: const Text('Add'))
-//                       ],
-//                     ));
-//           },
-//           label: (Row(
-//             children: const [Icon(Icons.add), Text('Add Data')],
-//           ))),
-//     );
-//   }
-// }
+  String toJson() => json.encode(toMap());
+
+  factory EmailSenderModel.fromJson(String source) =>
+      EmailSenderModel.fromMap(json.decode(source) as Map<String, dynamic>);
+}
+
+class TemplateParams {
+  String? fromName;
+  String? fromEmail;
+  String? total;
+  String? image;
+  String? size;
+  String? quantity;
+  String? price;
+
+  TemplateParams({
+    this.fromName,
+    this.fromEmail,
+    this.total,
+    this.image,
+    this.size,
+    this.quantity,
+    this.price,
+  });
+
+  factory TemplateParams.fromMap(Map<String, dynamic> json) => TemplateParams(
+        fromName: json["from_name"],
+        fromEmail: json["from_email"],
+        total: json["total"],
+        image: json["image"],
+        size: json["size"],
+        quantity: json["quantity"],
+        price: json["price"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "from_name": fromName,
+        "from_email": fromEmail,
+        "total": total,
+        "image": image,
+        "size": size,
+        "quantity": quantity,
+        "price": price,
+      };
+}

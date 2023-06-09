@@ -5,10 +5,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rex/components/utilities/constants.dart';
 import 'package:rex/components/utilities/submit.dart';
 import 'package:rex/components/screens template/user.dart';
+import 'package:rex/services/hive_storage_service.dart';
 
-class UserInfo extends StatelessWidget {
+import 'select_location.dart';
+
+class UserInfo extends StatefulWidget {
   const UserInfo({Key? key}) : super(key: key);
 
+  @override
+  State<UserInfo> createState() => _UserInfoState();
+}
+
+class _UserInfoState extends State<UserInfo> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -44,7 +52,8 @@ class UserInfo extends StatelessWidget {
               ),
               User(
                 image: 'images/locationicon.png',
-                placeholder: 'Adresse de livraison',
+                placeholder: locationBox?.get('location').toString() ??
+                    'Adresse de livraison',
                 onTap: () {
                   context.router.pushNamed('/select-location');
                 },

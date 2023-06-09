@@ -13,8 +13,8 @@ Future<void> main() async {
   // Registering the adapter
   Hive.registerAdapter(GazAdapter());
   // Opening the box
-  final _h = HiveHelper( );
   gazBox = await Hive.openBox<Gaz>('gazBox');
+  locationBox = await Hive.openBox<String>('locationBox');
 
   runApp(
     Rex(),

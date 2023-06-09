@@ -3,8 +3,12 @@ import 'package:hive/hive.dart';
 import 'package:rex/screens/cart_screen/models/Gaz.dart';
 
 late Box<Gaz> gazBox;
+late Box<String?>? locationBox;
 
 class HiveHelper {
+  saveLocation(String location) {
+     locationBox!.put('location', location);
+  }
   deleteInfo(int index) {
     gazBox.deleteAt(index);
     if (kDebugMode) {

@@ -7,7 +7,7 @@ class User extends StatelessWidget {
   const User({Key? key, required this.image, required this.placeholder, this.onTap})
       : super(key: key);
 
-  final String placeholder;
+  final String? placeholder;
   final String image;
   final Function()? onTap;
 

@@ -1,26 +1,27 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'cart_screen/models/Gaz.dart';
 
 class EmailSenderModel {
-  String? serviceId;
-  String? templateId;
-  String? userId;
+  String? service_id;
+  String? template_id;
+  String? public_key;
   TemplateParams? templateParams;
   List<Gaz>? gases;
 
   EmailSenderModel(
-      {required this.serviceId,
-      required this.templateId,
-      required this.userId,
+      {required this.service_id,
+      required this.template_id,
+      required this.public_key,
       required this.templateParams,
       required this.gases});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'serviceId': serviceId,
-      'templateId': templateId,
-      'userId': userId,
+      'service_id': service_id,
+      'template_id': template_id,
+      'public_key': public_key,
       'templateParams': templateParams?.toJson(),
       'gases': gases!.map((x) => x.toMap()).toList(),
     };
@@ -28,10 +29,10 @@ class EmailSenderModel {
 
   factory EmailSenderModel.fromMap(Map<String, dynamic> map) {
     return EmailSenderModel(
-      serviceId: map['serviceId'] != null ? map['serviceId'] as String : null,
-      templateId:
-          map['templateId'] != null ? map['templateId'] as String : null,
-      userId: map['userId'] != null ? map['userId'] as String : null,
+      service_id: map['service_id'] != null ? map['service_id'] as String : null,
+      template_id:
+          map['template_id'] != null ? map['template_id'] as String : null,
+      public_key: map['userId'] != null ? map['public_key'] as String : null,
       templateParams: map['templateParams'] != null
           ? TemplateParams.fromMap(
               map['templateParams'] as Map<String, dynamic>)

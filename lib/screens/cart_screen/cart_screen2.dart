@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, constant_identifier_names
+
 import 'dart:convert';
 import 'dart:developer';
 
@@ -16,8 +18,8 @@ import '../bag.dart';
 import '../gaz_form.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
-import 'google_sign_in.dart';
 import 'models/Gaz.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class CartScreen2 extends StatefulWidget {
   CartScreen2({super.key});
@@ -44,7 +46,7 @@ class _CartScreen2State extends State<CartScreen2> {
           valueListenable: gazBox.listenable(),
           builder: (context, Box box, widget) {
             return box.isEmpty
-                ? StartShopping()
+                ? const StartShopping()
                 : Padding(
                     padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                     child: Column(
@@ -180,7 +182,8 @@ class _CartScreen2State extends State<CartScreen2> {
                                           backgroundColor: Colors.red),
                                 );
                               },
-                              margin: EdgeInsets.only(left: 205.0, right: 10.0),
+                              margin: const EdgeInsets.only(
+                                  left: 205.0, right: 10.0),
                               text: 'COMMANDE'),
                           const SizedBox(
                             height: 50.0,
@@ -195,18 +198,16 @@ Future sendEmail({required List<Gaz> gazes}) async {
   final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
   const serviceId = 'service_zq9qmpf';
   const templateId = 'template_d3jwecj';
-  const userId = '2dBM08mwa_REgPW42';
-  final user = await GoogleAuthApi.signIn();
-  if (user == null) return;
-  final email = user.email;
-  final response = await http.post(url,
-      headers: {'Content-Type': 'application/json'},
-      body: EmailSenderModel(
-          serviceId: serviceId,
-          templateId: templateId,
-          userId: userId,
+  const public_key = '2dBM08mwa_REgPW42';
+  // final user = await GoogleAuthApi.signIn();
+  // if (user == null) return;
+  const email = 'jessedan160@gmail.com';
+  // final email = user.email;
+  var body = EmailSenderModel(
+          service_id: serviceId,
+          template_id: templateId,
+          public_key: public_key,
           templateParams: TemplateParams(
-            /// [fill the json[' '] with the nessary data]
             fromName: "Rex",
             fromEmail: email,
             total: '',
@@ -215,10 +216,21 @@ Future sendEmail({required List<Gaz> gazes}) async {
             quantity: '',
             price: '',
           ),
-          gases: gazes));
+          gases: gazes)
+      .toJson();
+  Map<String, String>? headers = {
+    'Content-Type': 'application/json',
+    "origin": ""
+  };
+  
+  final response = await http.post(url, headers: headers, body: body);
 
   if (kDebugMode) {
-    print(response.body);
+    log(response.body);
+    log(response.request!.url.toString());
+    log(response.statusCode.toString());
+    log(body);
   }
+
   return response.statusCode;
 }

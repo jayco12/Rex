@@ -1,9 +1,9 @@
-// ignore_for_file: use_build_context_synchronously, constant_identifier_names
-
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:emailjs/emailjs.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -18,8 +18,8 @@ import '../bag.dart';
 import '../gaz_form.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'google_sign_in.dart';
 import 'models/Gaz.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class CartScreen2 extends StatefulWidget {
   CartScreen2({super.key});
@@ -110,6 +110,7 @@ class _CartScreen2State extends State<CartScreen2> {
                                 itemCount: box.length,
                                 itemBuilder: (context, index) {
                                   var gazData = gazBox.getAt(index);
+
                                   return Column(
                                     children: [
                                       Card(
@@ -119,17 +120,14 @@ class _CartScreen2State extends State<CartScreen2> {
                                         elevation: 6.0,
                                         child: ListTile(
                                           leading: SizedBox(
-                                            height: 70,
-                                            width: 70,
-                                            child: Image.asset(
-                                              gazData!.image,
-                                              height: 50,
-                                              width: 50,
-                                            ),
-                                          ),
-                                          title: Text(gazData.size),
+                                              height: 70,
+                                              width: 70,
+                                              child:
+                                                  Image.asset(gazData?.image)),
+                                          title: Text(gazData?.price.toString()
+                                              as String),
                                           subtitle: Text(
-                                              '\n\nquantity:${gazData.quantity}'),
+                                              '\n\nquantity:${gazData?.quantity}'),
                                           trailing: GestureDetector(
                                               child: const Icon(
                                                 Icons.delete_outline,
@@ -169,18 +167,46 @@ class _CartScreen2State extends State<CartScreen2> {
                           ),
                           Submit(
                               onPressed: () async {
-                                final response = await sendEmail(
-                                    gazes: _hiveHelper.getDataList());
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  response == 200
-                                      ? const SnackBar(
-                                          content: Text('order Sent!'),
-                                          backgroundColor: Colors.green)
-                                      : const SnackBar(
-                                          content:
-                                              Text('Failed to place order!'),
-                                          backgroundColor: Colors.red),
-                                );
+                                final user = await GoogleAuthApi.signIn();
+                                if (user == null) return;
+
+                                final email = user.email;
+                                const serviceId = 'service_zq9qmpf';
+                                const templateId = 'template_d3jwecj';
+
+                                Map<String, dynamic> templateParams =
+                                    TemplateParams(
+                                  fromName: "Rex",
+                                  fromEmail: email,
+                                  total: '',
+                                  image: '',
+                                  size: '',
+                                  quantity: '',
+                                  price: '',
+                                ).toMap();
+
+                                try {
+                                  final response = await EmailJS.send(
+                                      'service_hfq7jdm',
+                                      'template_k1dkkli',
+                                      templateParams,
+                                      Options(
+                                          publicKey: 'A5-5H3clIup8fX6Yy',
+                                          privateKey: 'vZwdwYKPBO2e_OQThS'));
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    response == 200
+                                        ? const SnackBar(
+                                            content: Text('order Sent!'),
+                                            backgroundColor: Colors.green)
+                                        : const SnackBar(
+                                            content:
+                                                Text('Failed to place order!'),
+                                            backgroundColor: Colors.red),
+                                  );
+                                } catch (error) {
+                                  print(error.toString());
+                                }
                               },
                               margin: const EdgeInsets.only(
                                   left: 205.0, right: 10.0),
@@ -194,43 +220,43 @@ class _CartScreen2State extends State<CartScreen2> {
   }
 }
 
-Future sendEmail({required List<Gaz> gazes}) async {
-  final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
-  const serviceId = 'service_zq9qmpf';
-  const templateId = 'template_d3jwecj';
-  const public_key = '2dBM08mwa_REgPW42';
-  // final user = await GoogleAuthApi.signIn();
-  // if (user == null) return;
-  const email = 'jessedan160@gmail.com';
-  // final email = user.email;
-  var body = EmailSenderModel(
-          service_id: serviceId,
-          template_id: templateId,
-          public_key: public_key,
-          templateParams: TemplateParams(
-            fromName: "Rex",
-            fromEmail: email,
-            total: '',
-            image: '',
-            size: '',
-            quantity: '',
-            price: '',
-          ),
-          gases: gazes)
-      .toJson();
-  Map<String, String>? headers = {
-    'Content-Type': 'application/json',
-    "origin": ""
-  };
-  
-  final response = await http.post(url, headers: headers, body: body);
+// Future sendEmail({required List<Gaz> gazes}) async {
+//   final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
+//   const serviceId = 'service_zq9qmpf';
+//   const templateId = 'template_d3jwecj';
 
-  if (kDebugMode) {
-    log(response.body);
-    log(response.request!.url.toString());
-    log(response.statusCode.toString());
-    log(body);
-  }
+//   final user = await GoogleAuthApi.signIn();
+//   if (user == null) return;
 
-  return response.statusCode;
-}
+//   final email = user.email;
+//   // Options(publicKey: '2dBM08mwa_REgPW42', privateKey: '-kEgRjqg-MFVNEbr__ftg');
+//   var body = EmailSenderModel(
+//           serviceId: serviceId,
+//           templateId: templateId,
+//           templateParams: TemplateParams(
+//             fromName: "Rex",
+//             fromEmail: email,
+//             total: '',
+//             image: '',
+//             size: '',
+//             quantity: '',
+//             price: '',
+//           ),
+//           gases: gazes)
+//       .toJson();
+//   Map<String, String>? headers = {
+//     'Content-Type': 'application/json',
+//     'origin': 'http://localhost'
+//   };
+
+//   final response = await http.post(url, headers: headers, body: body);
+
+//   if (kDebugMode) {
+//     log(response.body);
+//     log(response.request!.url.toString());
+//     log(response.statusCode.toString());
+//     log(body);
+//   }
+
+//   return response.statusCode;
+// }

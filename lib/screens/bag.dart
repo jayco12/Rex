@@ -1,66 +1,19 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'cart_screen/models/Gaz.dart';
 
-class EmailSenderModel {
-  String? service_id;
-  String? template_id;
-  String? public_key;
-  TemplateParams? templateParams;
-  List<Gaz>? gases;
+import 'dart:convert';
 
-  EmailSenderModel(
-      {required this.service_id,
-      required this.template_id,
-      required this.public_key,
-      required this.templateParams,
-      required this.gases});
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'service_id': service_id,
-      'template_id': template_id,
-      'public_key': public_key,
-      'templateParams': templateParams?.toJson(),
-      'gases': gases!.map((x) => x.toMap()).toList(),
-    };
-  }
-
-  factory EmailSenderModel.fromMap(Map<String, dynamic> map) {
-    return EmailSenderModel(
-      service_id: map['service_id'] != null ? map['service_id'] as String : null,
-      template_id:
-          map['template_id'] != null ? map['template_id'] as String : null,
-      public_key: map['userId'] != null ? map['public_key'] as String : null,
-      templateParams: map['templateParams'] != null
-          ? TemplateParams.fromMap(
-              map['templateParams'] as Map<String, dynamic>)
-          : null,
-      gases: map['gases'] != null
-          ? List<Gaz>.from(
-              (map['gases'] as List<int>).map<Gaz?>(
-                (x) => Gaz.fromMap(x as Map<String, dynamic>),
-              ),
-            )
-          : null,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory EmailSenderModel.fromJson(String source) =>
-      EmailSenderModel.fromMap(json.decode(source) as Map<String, dynamic>);
-}
+import 'package:flutter/material.dart';
 
 class TemplateParams {
-  String? fromName;
-  String? fromEmail;
-  String? total;
-  String? image;
-  String? size;
-  String? quantity;
-  String? price;
+  final String? fromName;
+  final String? fromEmail;
+  final String? total;
+  final String? image;
+  final String? size;
+  final String? quantity;
+  final String? price;
 
   TemplateParams({
     this.fromName,
@@ -72,23 +25,33 @@ class TemplateParams {
     this.price,
   });
 
-  factory TemplateParams.fromMap(Map<String, dynamic> json) => TemplateParams(
-        fromName: json["from_name"],
-        fromEmail: json["from_email"],
-        total: json["total"],
-        image: json["image"],
-        size: json["size"],
-        quantity: json["quantity"],
-        price: json["price"],
-      );
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'fromName': fromName,
+      'fromEmail': fromEmail,
+      'total': total,
+      'image': image,
+      'size': size,
+      'quantity': quantity,
+      'price': price,
+    };
+  }
 
-  Map<String, dynamic> toJson() => {
-        "from_name": fromName,
-        "from_email": fromEmail,
-        "total": total,
-        "image": image,
-        "size": size,
-        "quantity": quantity,
-        "price": price,
-      };
+  factory TemplateParams.fromMap(Map<String, dynamic> map) {
+    return TemplateParams(
+      fromName: map['fromName'] != null ? map['fromName'] as String : null,
+      fromEmail: map['fromEmail'] != null ? map['fromEmail'] as String : null,
+      total: map['total'] != null ? map['total'] as String : null,
+      image: map['image'] != null ? map['image'] as String : null,
+      size: map['size'] != null ? map['size'] as String : null,
+      quantity: map['quantity'] != null ? map['quantity'] as String : null,
+      price: map['price'] != null ? map['price'] as String : null,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory TemplateParams.fromJson(String source) =>
+      TemplateParams.fromMap(json.decode(source) as Map<String, dynamic>);
 }
+// ignore_for_file: public_member_api_docs, sort_constructors_first import 'dar...

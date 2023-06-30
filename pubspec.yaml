@@ -14,7 +14,7 @@ dependencies:
 
 
   cupertino_icons: ^1.0.2
-  google_fonts: ^3.0.1
+  google_fonts: ^4.0.4
   mj_image_slider: ^0.0.7
   font_awesome_flutter: ^10.1.0
   persistent_bottom_nav_bar: ^5.0.2
@@ -31,6 +31,7 @@ dependencies:
   hive_flutter: ^1.1.0
   mailer: ^6.0.1
   google_sign_in: ^6.1.4
+  emailjs: ^1.1.0
 
 dev_dependencies:
   auto_route_generator: ^5.0.3
